@@ -233,7 +233,16 @@ class SqlExecutor {
             function () use($sequenceName) {
                 $sql = "SELECT nextval('$sequenceName')";
                 $stmt = $this->prepareSql($sql);
-                $stmt->execute();
+                try {
+                    if (! $stmt->execute()) {
+                        throw new \Exception('Execute SQL fail with no message');
+                    }
+                } catch (\Exception $e) {
+                    if ($this->_sql_logger) {
+                        call_user_func($this->_sql_logger, $e->getMessage(), $this->_sql_log_trid);
+                    }
+                    throw $e;
+                }
                 $id = $stmt->fetchColumn();
                 if ($id) {
                     return $id;
@@ -415,7 +424,9 @@ class SqlExecutor {
             call_user_func($logger, implode('; ', $log_values), $this->_sql_log_trid);
         }
         try {
-            $stmt->execute();
+            if (! $stmt->execute()) {
+                throw new \Exception('Execute SQL fail with no message');
+            }
         } catch (\Exception $e) {
             if ($logger) {
                 call_user_func($logger, $e->getMessage(), $this->_sql_log_trid);
