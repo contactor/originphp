@@ -43,7 +43,7 @@ class Mvc {
     
     /**
      * FormPlus object
-     * @return \origin\form\FormPlus
+     * @var \origin\form\FormPlus
      */
     private $_form;
 
@@ -61,15 +61,18 @@ class Mvc {
     }
 
     /**
-     * codepoint path format like: '/www/project', if $application_name = 'application', will set:
-     * actoin root path = /internal/application/actions,   namespace = application\actions  
+     * codepoint path format like: '/www/project', if $application_name = 'application', and
+     * $backend_original_path = '/backend/original/', $frontend_templates_path = '/frontend/templates/', will set:
+     * actoin root path = /backend/original/application/actions,   namespace = application\actions  
      * view root path = /frontend/templates/application,   namespace = application
      * if $codepoint_path === FALSE, will not config action and view path, in case for CLI don't need them
      * @param string $codepoint_path
      * @param string $application_name
+     * @param string $backend_original_path
+     * @param string $frontend_templates_path
      * @return \origin\mvc\Mvc
      */
-    public function initMvc($codepoint_path = FALSE, $application_name = 'application') {
+    public function initMvc($codepoint_path = FALSE, $application_name = 'application', $backend_original_path = '/backend/original/', $frontend_templates_path = '/frontend/templates/') {
         if ($this->_controller) {
             return $this;
         }
@@ -78,8 +81,8 @@ class Mvc {
         $this->_controller = new Controller();
         $this->_view = $this->_controller->getView();
         if ($codepoint_path !== FALSE) {
-            $this->setActionPathConfig($this->_controller->getRouter(), $codepoint_path, $application_name);
-            $this->setViewPathConfig($this->_view, $codepoint_path, $application_name);
+            $this->setActionPathConfig($this->_controller->getRouter(), $codepoint_path, $application_name, $backend_original_path);
+            $this->setViewPathConfig($this->_view, $codepoint_path, $application_name, $frontend_templates_path);
         }
         return $this;
     }
@@ -161,12 +164,12 @@ class Mvc {
         throw new \LogicException('Controller not set yet');
     }
 
-    private function setActionPathConfig(Router $router, $codepoint_path, $application_name) {
-        $router->setActionRootPath($codepoint_path . '/internal/' . $application_name . '/actions', $application_name . '\\actions');
+    private function setActionPathConfig(Router $router, $codepoint_path, $application_name, $backend_original_path) {
+        $router->setActionRootPath($codepoint_path . $backend_original_path . $application_name . '/actions', $application_name . '\\actions');
     }
 
-    private function setViewPathConfig(View $view, $codepoint_path, $application_name) {
-        $view->setViewRootPath($codepoint_path . '/frontend/templates/' . $application_name, $application_name);
+    private function setViewPathConfig(View $view, $codepoint_path, $application_name, $frontend_templates_path) {
+        $view->setViewRootPath($codepoint_path . $frontend_templates_path . $application_name, $application_name);
     }
 }
 
