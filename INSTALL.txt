@@ -1,20 +1,10 @@
 INSTALLATION
 ------------
 
-Origin PHP Framework installation is very simple, download the framework,
-extract it to the folder you would like to keep it in, and add the library
-directory to your PHP include_path.
+It's simple, download the framework and put it to your project folder.
 
 
 SYSTEM REQUIREMENTS
 -------------------
 
-Origin PHP Framework requires PHP 5.3.0 or later.
-
-
-MORE INFORMATION
-----------------------------
-
-Please refer to the link for more information:
-
-http://origin.eppbar.org
+Requires PHP 5.3.0 or later.
